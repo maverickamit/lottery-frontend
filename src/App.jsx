@@ -8,6 +8,7 @@ const App = () => {
   const [balance, setBalance] = useState("");
   const [value, setValue] = useState("");
   const [walletConnected, setWalletConnected] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -16,10 +17,12 @@ const App = () => {
     event.preventDefault();
     const accounts = await web3.eth.getAccounts();
     if (value) {
+      setMessage("Waiting on transaction success...");
       await lottery.methods.enter().send({
         from: accounts[0],
         value: web3.utils.toWei(value, "ether"),
       });
+      setMessage("You have entered!");
     }
   };
   const connectWallet = async () => {
@@ -71,6 +74,8 @@ const App = () => {
       ) : (
         <button onClick={connectWallet}>Connect Wallet</button>
       )}
+      <hr />
+      <h2>{message}</h2>
     </div>
   );
 };
