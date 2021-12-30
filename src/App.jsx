@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import lottery from "./lottery";
 import web3 from "./web3";
-
+const { ethereum } = window;
 const App = () => {
   const [manager, setManager] = useState("");
   const [players, setPlayers] = useState([]);
   const [balance, setBalance] = useState("");
   const [value, setValue] = useState("");
+  const [walletConnected, setWalletConnected] = useState(false);
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -14,6 +15,20 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
   };
+  const connectWallet = async () => {
+    await ethereum.request({ method: "eth_requestAccounts" });
+    setWalletConnected(true);
+  };
+
+  useEffect(() => {
+    const checkIfWalletConnected = async () => {
+      const accounts = await web3.eth.getAccounts();
+      if (accounts.length !== 0) {
+        setWalletConnected(true);
+      }
+    };
+    checkIfWalletConnected();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,13 +53,17 @@ const App = () => {
         {web3.utils.fromWei(balance)} ether.
       </p>
       <hr />
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Amount of ether to enter </label>
-          <input type="text" value={value} onChange={handleChange} />
-        </div>
-        <input type="submit" value="Submit" />
-      </form>
+      {walletConnected ? (
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Amount of ether to enter </label>
+            <input type="text" value={value} onChange={handleChange} />
+          </div>
+          <input type="submit" value="Submit" />
+        </form>
+      ) : (
+        <button onClick={connectWallet}>Connect Wallet</button>
+      )}
     </div>
   );
 };
