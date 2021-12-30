@@ -6,8 +6,8 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await lottery.methods.manager().call();
-      setManager(result);
+      const fetchedManager = await lottery.methods.manager().call();
+      setManager(fetchedManager);
     };
     fetchData();
   }, []);
