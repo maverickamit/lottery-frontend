@@ -66,6 +66,7 @@ const App = () => {
       {walletConnected ? (
         <form onSubmit={handleSubmit}>
           <div>
+            <h2>Want to try your luck?</h2>
             <label>Amount of ether to enter </label>
             <input type="text" value={value} onChange={handleChange} />
           </div>
