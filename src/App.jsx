@@ -25,6 +25,15 @@ const App = () => {
       setMessage("You have entered!");
     }
   };
+  const handleClick = async () => {
+    const accounts = await web3.eth.getAccounts();
+    setMessage("Waiting on transaction success...");
+    await lottery.methods.pickWinner().send({
+      from: accounts[0],
+    });
+    setMessage("A winner has been picked!");
+  };
+
   const connectWallet = async () => {
     await ethereum.request({ method: "eth_requestAccounts" });
     setWalletConnected(true);
@@ -64,21 +73,26 @@ const App = () => {
       </p>
       <hr />
       {walletConnected ? (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <h2>Want to try your luck?</h2>
-            <label>Amount of ether to enter </label>
-            <input type="text" value={value} onChange={handleChange} />
-          </div>
-          <input type="submit" value="Submit" />
-        </form>
+        <div>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <h2>Want to try your luck?</h2>
+              <label>Amount of ether to enter </label>
+              <input type="text" value={value} onChange={handleChange} />
+            </div>
+            <input type="submit" value="Submit" />
+          </form>
+          <hr />
+          <h4>Ready to pick a winner?</h4>
+          <button onClick={handleClick}>Pick a winner</button>
+          <hr />
+        </div>
       ) : (
         <button onClick={connectWallet}>Connect Wallet</button>
       )}
-      <hr />
+
       <h2>{message}</h2>
     </div>
   );
 };
-
 export default App;
