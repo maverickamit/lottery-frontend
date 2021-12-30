@@ -12,8 +12,15 @@ const App = () => {
   const handleChange = (event) => {
     setValue(event.target.value);
   };
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    const accounts = await web3.eth.getAccounts();
+    if (value) {
+      await lottery.methods.enter().send({
+        from: accounts[0],
+        value: web3.utils.toWei(value, "ether"),
+      });
+    }
   };
   const connectWallet = async () => {
     await ethereum.request({ method: "eth_requestAccounts" });
