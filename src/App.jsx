@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import lottery from "./lottery";
 import web3 from "./web3";
+import {
+  Container,
+  Menu,
+  Header,
+  Form,
+  Button,
+  Card,
+  Divider,
+  Message,
+} from "semantic-ui-react";
+
 const { ethereum } = window;
 const App = () => {
   const [manager, setManager] = useState("");
@@ -39,6 +50,21 @@ const App = () => {
     setWalletConnected(true);
   };
 
+  const items = [
+    {
+      header: "Manager",
+      description: ` This contract is managed by ${manager}.`,
+      fluid: true,
+    },
+    {
+      header: "Stats",
+      description: ` There are currently
+       ${players.length} people entered, competing to
+        win ${web3.utils.fromWei(balance)} ether.`,
+      fluid: true,
+    },
+  ];
+
   useEffect(() => {
     const checkIfWalletConnected = async () => {
       const accounts = await web3.eth.getAccounts();
@@ -64,35 +90,38 @@ const App = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Lottery Contract</h2>
-      <p>This contract is managed by {manager}.</p>
-      <p>
-        There are currently {players.length} people entered, competing to win{" "}
-        {web3.utils.fromWei(balance)} ether.
-      </p>
-      <hr />
+    <Container>
+      <Menu fluid widths={1}>
+        <Menu.Item header>Lottery Contract</Menu.Item>
+      </Menu>
+      <Card.Group items={items} />
+      <Divider />
       {walletConnected ? (
         <div>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <h2>Want to try your luck?</h2>
-              <label>Amount of ether to enter </label>
+          <Form onSubmit={handleSubmit}>
+            <Form.Field>
+              <Header size="medium">Want to try your luck?</Header>
+              <label>Amount of ether to enter</label>
               <input type="text" value={value} onChange={handleChange} />
-            </div>
-            <input type="submit" value="Submit" />
-          </form>
-          <hr />
+            </Form.Field>
+            <Button type="submit" primary>
+              Submit
+            </Button>
+          </Form>
+          <Divider />
           <h4>Ready to pick a winner?</h4>
-          <button onClick={handleClick}>Pick a winner</button>
-          <hr />
+          <Button onClick={handleClick} color="teal">
+            Pick a winner
+          </Button>
+          <Divider />
         </div>
       ) : (
-        <button onClick={connectWallet}>Connect Wallet</button>
+        <Button onClick={connectWallet} color="green">
+          Connect Wallet
+        </Button>
       )}
-
-      <h2>{message}</h2>
-    </div>
+      <Message hidden={!message}>{message}</Message>
+    </Container>
   );
 };
 export default App;
