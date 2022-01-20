@@ -24,25 +24,37 @@ const App = () => {
   const handleChange = (event) => {
     setValue(event.target.value);
   };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const accounts = await web3.eth.getAccounts();
-    if (value) {
-      setMessage("Waiting on transaction success...");
-      await lottery.methods.enter().send({
-        from: accounts[0],
-        value: web3.utils.toWei(value, "ether"),
-      });
-      setMessage("You have entered!");
+    setMessage("");
+    try {
+      const accounts = await web3.eth.getAccounts();
+      if (value) {
+        setMessage("Waiting on transaction success...");
+        await lottery.methods.enter().send({
+          from: accounts[0],
+          value: web3.utils.toWei(value, "ether"),
+        });
+        setMessage("You have entered!");
+      }
+    } catch (err) {
+      setMessage(err.message);
     }
   };
+
   const handleClick = async () => {
-    const accounts = await web3.eth.getAccounts();
-    setMessage("Waiting on transaction success...");
-    await lottery.methods.pickWinner().send({
-      from: accounts[0],
-    });
-    setMessage("A winner has been picked!");
+    setMessage("");
+    try {
+      const accounts = await web3.eth.getAccounts();
+      setMessage("Waiting on transaction success...");
+      await lottery.methods.pickWinner().send({
+        from: accounts[0],
+      });
+      setMessage("A winner has been picked!");
+    } catch (err) {
+      setMessage(err.message);
+    }
   };
 
   const connectWallet = async () => {
